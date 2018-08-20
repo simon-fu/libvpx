@@ -1814,8 +1814,8 @@ int main(int argc, char **argv) {
     app->open(width, height, 25);
     uint32_t duration = 90000 / 25;
 
-    frame_duration = duration;
-    duration = 1;
+    //frame_duration = duration;
+    //duration = 1;
 
 
   frame_avail = 1;
@@ -1905,10 +1905,34 @@ int main(int argc, char **argv) {
     }
     ++frame_cnt;
     pts += frame_duration;
-    if(frame_cnt >= 40){
-      odbgi("reach max frames");
-      break;
-    }
+    // if(frame_cnt >= 40){
+    //   odbgi("reach max frames");
+    //   break;
+    // }
+            bool quitLoop = false;
+            SDL_Event event;
+            while (SDL_PollEvent(&event)) {
+                if(event.type==SDL_QUIT){
+                    odbgi("got QUIT event %d", event.type);
+                    quitLoop = true;
+                    break;
+                }else if(event.type == SDL_WINDOWEVENT){
+                    if(event.window.event == SDL_WINDOWEVENT_CLOSE){
+                        odbgi("Window %d closed", event.window.windowID);
+                        quitLoop = true;
+                        break;
+                    }else if(event.window.event == SDL_WINDOWEVENT_RESIZED){
+                        odbgi("Window %d resized to %dx%d"
+                              , event.window.windowID
+                              , event.window.data1, event.window.data2);
+                        app->refresh();
+                    }
+                }
+            }
+            if(quitLoop){
+              break;
+            }
+
   }
   fclose(infile);
   printout_rate_control_summary(&rc, &cfg, frame_cnt);
