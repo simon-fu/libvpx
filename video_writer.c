@@ -39,7 +39,7 @@ VpxVideoWriter *vpx_video_writer_open(const char *filename,
     FILE *const file = fopen(filename, "wb");
     if (!file) return NULL;
 
-    writer = malloc(sizeof(*writer));
+    writer = (VpxVideoWriter *)malloc(sizeof(*writer));
     if (!writer) return NULL;
 
     writer->frame_count = 0;
